@@ -4,7 +4,14 @@ import { getRegistered, setRegisteredField, type RegisteredUser } from "@/lib/st
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Ban, ShieldCheck, Eye, Phone, MapPin, Calendar, Baby, Heart, Search } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/admin/users")({
   component: AdminUsers,
@@ -31,22 +38,32 @@ function AdminUsers() {
   };
 
   const term = q.trim().toLowerCase();
-  const filtered = users.filter((u) => !term
-    || u.name?.toLowerCase().includes(term)
-    || u.phone?.toLowerCase().includes(term)
-    || (u.district || "").toLowerCase().includes(term)
-    || (u.upazila || "").toLowerCase().includes(term));
+  const filtered = users.filter(
+    (u) =>
+      !term ||
+      u.name?.toLowerCase().includes(term) ||
+      u.phone?.toLowerCase().includes(term) ||
+      (u.district || "").toLowerCase().includes(term) ||
+      (u.upazila || "").toLowerCase().includes(term),
+  );
 
   return (
     <div className="space-y-4">
       <header className="flex items-end justify-between gap-3 flex-wrap">
         <div>
           <h1 className="font-display text-2xl">Users</h1>
-          <p className="text-sm text-muted-foreground">{users.length} registered mothers · showing {filtered.length}</p>
+          <p className="text-sm text-muted-foreground">
+            {users.length} registered mothers · showing {filtered.length}
+          </p>
         </div>
         <div className="relative w-full sm:max-w-xs">
           <Search className="size-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, phone, district…" className="pl-9 h-10" />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search name, phone, district…"
+            className="pl-9 h-10"
+          />
         </div>
       </header>
       <div className="card-warm overflow-hidden">
@@ -64,16 +81,37 @@ function AdminUsers() {
             {filtered.map((u) => {
               const s = statusOf(u);
               return (
-                <tr key={u.phone} className="border-t border-border hover:bg-secondary/40 transition">
+                <tr
+                  key={u.phone}
+                  className="border-t border-border hover:bg-secondary/40 transition"
+                >
                   <td className="p-3">{u.name}</td>
                   <td className="p-3 text-muted-foreground hidden sm:table-cell">{u.phone}</td>
-                  <td className="p-3 text-muted-foreground hidden md:table-cell">{u.district || "—"}</td>
-                  <td className="p-3"><span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md ${s.cls}`}><ShieldCheck className="size-3" /> {s.label}</span></td>
+                  <td className="p-3 text-muted-foreground hidden md:table-cell">
+                    {u.district || "—"}
+                  </td>
+                  <td className="p-3">
+                    <span
+                      className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md ${s.cls}`}
+                    >
+                      <ShieldCheck className="size-3" /> {s.label}
+                    </span>
+                  </td>
                   <td className="p-3 text-right whitespace-nowrap">
-                    <Button size="sm" variant="outline" className="rounded-lg mr-1" onClick={() => setOpen(u)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="rounded-lg mr-1"
+                      onClick={() => setOpen(u)}
+                    >
                       <Eye className="size-3.5 mr-1" /> View
                     </Button>
-                    <Button size="sm" variant="outline" className="rounded-lg" onClick={() => toggleBan(u)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="rounded-lg"
+                      onClick={() => toggleBan(u)}
+                    >
                       <Ban className="size-3.5 mr-1" /> {u.banned ? "Unban" : "Ban"}
                     </Button>
                   </td>
@@ -81,7 +119,13 @@ function AdminUsers() {
               );
             })}
             {filtered.length === 0 && (
-              <tr><td colSpan={5} className="p-6 text-center text-sm text-muted-foreground">{users.length === 0 ? "No registered users yet. Run the onboarding flow to seed data." : `No users match "${q}".`}</td></tr>
+              <tr>
+                <td colSpan={5} className="p-6 text-center text-sm text-muted-foreground">
+                  {users.length === 0
+                    ? "No registered users yet. Run the onboarding flow to seed data."
+                    : `No users match "${q}".`}
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
@@ -109,8 +153,14 @@ function AdminUsers() {
                 </div>
               )}
               <DialogFooter className="flex-row justify-between gap-2">
-                <Button variant="outline" onClick={() => setOpen(null)}>Close</Button>
-                <Button variant="outline" className={open.banned ? "" : "text-destructive border-destructive/40"} onClick={() => toggleBan(open)}>
+                <Button variant="outline" onClick={() => setOpen(null)}>
+                  Close
+                </Button>
+                <Button
+                  variant="outline"
+                  className={open.banned ? "" : "text-destructive border-destructive/40"}
+                  onClick={() => toggleBan(open)}
+                >
                   <Ban className="size-4 mr-1.5" /> {open.banned ? "Unban user" : "Ban user"}
                 </Button>
               </DialogFooter>
@@ -122,10 +172,20 @@ function AdminUsers() {
   );
 }
 
-function Field({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string }) {
+function Field({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+}) {
   return (
     <div className="rounded-lg border border-border p-2.5 bg-white">
-      <p className="text-[10px] uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1"><Icon className="size-3" /> {label}</p>
+      <p className="text-[10px] uppercase tracking-wider text-muted-foreground inline-flex items-center gap-1">
+        <Icon className="size-3" /> {label}
+      </p>
       <p className="text-sm mt-0.5 truncate">{value}</p>
     </div>
   );

@@ -16,7 +16,12 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div className={cn("text-center px-6 py-10 rounded-2xl bg-secondary/40 border border-border", className)}>
+    <div
+      className={cn(
+        "text-center px-6 py-10 rounded-2xl bg-secondary/40 border border-border",
+        className,
+      )}
+    >
       <div className="mx-auto size-12 rounded-2xl bg-white border border-border grid place-items-center mb-3 text-primary">
         {icon ?? <Sparkles className="size-5" />}
       </div>

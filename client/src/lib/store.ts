@@ -19,23 +19,31 @@ function createStore<T>(key: string, initial: T) {
 
   const persist = () => {
     if (typeof window === "undefined") return;
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {}
   };
 
   return {
-    get(): T { hydrate(); return value; },
+    get(): T {
+      hydrate();
+      return value;
+    },
     set(updater: T | ((v: T) => T)) {
       hydrate();
       value = typeof updater === "function" ? (updater as (v: T) => T)(value) : updater;
       persist();
       listeners.forEach((l) => l());
     },
-    subscribe(l: () => void) { listeners.add(l); return () => listeners.delete(l); },
+    subscribe(l: () => void) {
+      listeners.add(l);
+      return () => listeners.delete(l);
+    },
   };
 }
 
 export const listingsStore = createStore<Listing[]>("momota.listings.v1", seedListings);
-export const postsStore = createStore<Post[]>("momota.posts.v1", seedPosts);
+export const postsStore = createStore<Post[]>("momota.posts.v4", seedPosts);
 
 // Per-post report tally (postId → count). Used by community report flow + admin moderation.
 export const reportsStore = createStore<Record<string, number>>("momota.reports.v1", {});
@@ -81,23 +89,30 @@ const REG_KEY = "momota.registered.v1";
 
 export function getRegistered(): Record<string, RegisteredUser> {
   if (typeof window === "undefined") return {};
-  try { return JSON.parse(localStorage.getItem(REG_KEY) || "{}"); } catch { return {}; }
+  try {
+    return JSON.parse(localStorage.getItem(REG_KEY) || "{}");
+  } catch {
+    return {};
+  }
 }
 
 export function saveRegistered(u: RegisteredUser) {
   const all = getRegistered();
   all[u.phone] = { ...all[u.phone], ...u };
-  try { localStorage.setItem(REG_KEY, JSON.stringify(all)); } catch {}
+  try {
+    localStorage.setItem(REG_KEY, JSON.stringify(all));
+  } catch {}
 }
 
 export function setRegisteredField(phone: string, patch: Partial<RegisteredUser>) {
   const all = getRegistered();
   if (!all[phone]) return;
   all[phone] = { ...all[phone], ...patch };
-  try { localStorage.setItem(REG_KEY, JSON.stringify(all)); } catch {}
+  try {
+    localStorage.setItem(REG_KEY, JSON.stringify(all));
+  } catch {}
 }
 
 export function lookupRegistered(phone: string): RegisteredUser | undefined {
   return getRegistered()[phone];
 }
-

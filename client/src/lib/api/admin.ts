@@ -56,14 +56,16 @@ export async function reviewNid(id: string, decision: "approved" | "rejected"): 
   }
   const item = nidQueueStore.get().find((n) => n.id === id);
   if (!item) return;
-  nidQueueStore.set((q) => q.map((n) => n.id === id ? { ...n, status: decision } : n));
+  nidQueueStore.set((q) => q.map((n) => (n.id === id ? { ...n, status: decision } : n)));
   if (decision === "approved") {
     setRegisteredField(item.phone, { tier: 2 });
   }
 }
 
 // AI-derived health analytics (mock). When wired to backend, pass filters as query params.
-export async function getAnalytics(filters: AnalyticsFilters = { cohort: "all", district: "all" }): Promise<AnalyticsSnapshot> {
+export async function getAnalytics(
+  filters: AnalyticsFilters = { cohort: "all", district: "all" },
+): Promise<AnalyticsSnapshot> {
   if (API_ENABLED) {
     const qs = new URLSearchParams({ cohort: filters.cohort, district: filters.district });
     return apiFetch<AnalyticsSnapshot>(`${endpoints.adminAnalytics}?${qs}`);
@@ -76,7 +78,12 @@ function mockAnalytics(filters: AnalyticsFilters): AnalyticsSnapshot {
   const baseMothers = Math.max(users.length, 1240);
   // Cohort-aware sample sizing.
   const cohortShare: Record<Cohort, number> = {
-    "pregnancy": 0.25, "0-6m": 0.30, "6-12m": 0.18, "1-2y": 0.15, "2-5y": 0.10, "unknown": 0.02,
+    pregnancy: 0.25,
+    "0-6m": 0.3,
+    "6-12m": 0.18,
+    "1-2y": 0.15,
+    "2-5y": 0.1,
+    unknown: 0.02,
   };
   const cohortFactor = filters.cohort === "all" ? 1 : cohortShare[filters.cohort];
   const districtFactor = filters.district === "all" ? 1 : 0.18;
@@ -86,7 +93,8 @@ function mockAnalytics(filters: AnalyticsFilters): AnalyticsSnapshot {
   // Shift risk profile slightly per cohort & district to feel data-driven.
   const isPreg = filters.cohort === "pregnancy";
   const isPost = filters.cohort === "0-6m";
-  const ruralBoost = filters.district !== "all" && !["Dhaka", "Chattogram"].includes(filters.district);
+  const ruralBoost =
+    filters.district !== "all" && !["Dhaka", "Chattogram"].includes(filters.district);
 
   const maternal = {
     anemia_risk_pct: clamp(38 + (ruralBoost ? 8 : 0) + (isPreg ? 6 : 0)),
@@ -113,40 +121,66 @@ function mockAnalytics(filters: AnalyticsFilters): AnalyticsSnapshot {
   const ai_insights = [
     {
       id: "ai1",
-      severity: maternal.anemia_risk_pct > 40 ? "high" as const : "medium" as const,
+      severity: maternal.anemia_risk_pct > 40 ? ("high" as const) : ("medium" as const),
       title: "Anemia risk rising in 3rd-trimester cohort",
       body: `~${maternal.anemia_risk_pct}% of pregnant mothers in this slice show two or more anemia signals (fatigue self-reports, low IFA adherence, diet gaps).`,
-      recommendation: "Boost IFA distribution through upazila health complexes; co-deliver with iron-rich food guidance via SMS in Bangla.",
+      recommendation:
+        "Boost IFA distribution through upazila health complexes; co-deliver with iron-rich food guidance via SMS in Bangla.",
     },
     {
       id: "ai2",
-      severity: maternal.postpartum_depression_pct > 22 ? "high" as const : "medium" as const,
+      severity: maternal.postpartum_depression_pct > 22 ? ("high" as const) : ("medium" as const),
       title: "Postpartum mood signals concentrated in 0–6m cohort",
       body: `${maternal.postpartum_depression_pct}% of new mothers describe persistent low mood, sleeplessness or isolation in midwife conversations.`,
-      recommendation: "Scale UNICEF maternal mental-health hotline coverage and train upazila family-welfare visitors on screening.",
+      recommendation:
+        "Scale UNICEF maternal mental-health hotline coverage and train upazila family-welfare visitors on screening.",
     },
     {
       id: "ai3",
-      severity: child.immunization_coverage_pct < 80 ? "high" as const : "low" as const,
+      severity: child.immunization_coverage_pct < 80 ? ("high" as const) : ("low" as const),
       title: "EPI coverage gap detected",
       body: `Routine EPI uptake at ${child.immunization_coverage_pct}% in this slice. Drop-off concentrated between pentavalent-2 and measles-1.`,
-      recommendation: "Trigger an SMS reminder wave 2 weeks before each due date; partner with local imam/teacher leaders in low-coverage unions.",
+      recommendation:
+        "Trigger an SMS reminder wave 2 weeks before each due date; partner with local imam/teacher leaders in low-coverage unions.",
     },
     {
       id: "ai4",
-      severity: child.diarrhoea_incidence_per_1000 > 140 ? "high" as const : "medium" as const,
+      severity: child.diarrhoea_incidence_per_1000 > 140 ? ("high" as const) : ("medium" as const),
       title: "Diarrhoea season uptick",
       body: `${child.diarrhoea_incidence_per_1000}/1000 children showing diarrhoea symptoms — concentrated in flood-affected unions.`,
-      recommendation: "Pre-position ORS at community clinics; activate icddr,b rehydration corners and broadcast hygiene tips.",
+      recommendation:
+        "Pre-position ORS at community clinics; activate icddr,b rehydration corners and broadcast hygiene tips.",
     },
   ];
 
-  const district_risk = ["Dhaka", "Chattogram", "Sylhet", "Rajshahi", "Khulna", "Barishal", "Rangpur", "Mymensingh"].map((d, i) => ({
-    district: d,
-    mothers: Math.round((300 - i * 26) * (filters.cohort === "all" ? 1 : cohortShare[filters.cohort])),
-    risk_index: 30 + ((i * 9) % 55) + (["Sylhet", "Rangpur", "Barishal"].includes(d) ? 10 : 0),
-    top_issue: ["Anemia", "EPI drop-off", "PPD", "Stunting", "Diarrhoea", "Anemia", "Low birth weight", "Skilled birth gap"][i],
-  })).sort((a, b) => b.risk_index - a.risk_index);
+  const district_risk = [
+    "Dhaka",
+    "Chattogram",
+    "Sylhet",
+    "Rajshahi",
+    "Khulna",
+    "Barishal",
+    "Rangpur",
+    "Mymensingh",
+  ]
+    .map((d, i) => ({
+      district: d,
+      mothers: Math.round(
+        (300 - i * 26) * (filters.cohort === "all" ? 1 : cohortShare[filters.cohort]),
+      ),
+      risk_index: 30 + ((i * 9) % 55) + (["Sylhet", "Rangpur", "Barishal"].includes(d) ? 10 : 0),
+      top_issue: [
+        "Anemia",
+        "EPI drop-off",
+        "PPD",
+        "Stunting",
+        "Diarrhoea",
+        "Anemia",
+        "Low birth weight",
+        "Skilled birth gap",
+      ][i],
+    }))
+    .sort((a, b) => b.risk_index - a.risk_index);
 
   return {
     generated_at: new Date().toISOString(),
@@ -157,14 +191,27 @@ function mockAnalytics(filters: AnalyticsFilters): AnalyticsSnapshot {
     child,
     ai_insights,
     district_risk,
-    cohort_breakdown: { "pregnancy": Math.round(baseMothers * 0.25), "0-6m": Math.round(baseMothers * 0.30), "6-12m": Math.round(baseMothers * 0.18), "1-2y": Math.round(baseMothers * 0.15), "2-5y": Math.round(baseMothers * 0.10), "unknown": Math.round(baseMothers * 0.02) },
+    cohort_breakdown: {
+      pregnancy: Math.round(baseMothers * 0.25),
+      "0-6m": Math.round(baseMothers * 0.3),
+      "6-12m": Math.round(baseMothers * 0.18),
+      "1-2y": Math.round(baseMothers * 0.15),
+      "2-5y": Math.round(baseMothers * 0.1),
+      unknown: Math.round(baseMothers * 0.02),
+    },
     weekly_anc_visits: gen(12, 120, 30),
     weekly_vaccinations: gen(12, 240, 60),
   };
 }
 
-function clamp(n: number) { return Math.max(0, Math.min(100, Math.round(n))); }
-function round1(n: number) { return Math.round(n * 10) / 10; }
+function clamp(n: number) {
+  return Math.max(0, Math.min(100, Math.round(n)));
+}
+function round1(n: number) {
+  return Math.round(n * 10) / 10;
+}
 function gen(n: number, base: number, jitter: number) {
-  return Array.from({ length: n }, (_, i) => Math.round(base + Math.sin(i / 2) * jitter + (i * jitter) / n));
+  return Array.from({ length: n }, (_, i) =>
+    Math.round(base + Math.sin(i / 2) * jitter + (i * jitter) / n),
+  );
 }

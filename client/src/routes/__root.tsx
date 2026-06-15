@@ -75,14 +75,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#EAF2FB" },
       { title: "Momota — Support for mothers in Bangladesh" },
-      { name: "description", content: "A safe, women-only digital space for mothers in Bangladesh: trusted community, baby marketplace, verified medical alerts, and an AI Digital Midwife." },
+      {
+        name: "description",
+        content:
+          "A safe, women-only digital space for mothers in Bangladesh: trusted community, baby marketplace, verified medical alerts, and an AI Digital Midwife.",
+      },
       { name: "author", content: "Momota" },
       { property: "og:title", content: "Momota — Support for mothers in Bangladesh" },
-      { property: "og:description", content: "A safe, women-only digital space for mothers in Bangladesh: trusted community, baby marketplace, verified medical alerts, and an AI Digital Midwife." },
+      {
+        property: "og:description",
+        content:
+          "A safe, women-only digital space for mothers in Bangladesh: trusted community, baby marketplace, verified medical alerts, and an AI Digital Midwife.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "Momota — Support for mothers in Bangladesh" },
-      { name: "twitter:description", content: "A safe, women-only digital space for mothers in Bangladesh: trusted community, baby marketplace, verified medical alerts, and an AI Digital Midwife." },
+      {
+        name: "twitter:description",
+        content:
+          "A safe, women-only digital space for mothers in Bangladesh: trusted community, baby marketplace, verified medical alerts, and an AI Digital Midwife.",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

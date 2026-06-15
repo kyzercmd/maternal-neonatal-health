@@ -24,7 +24,7 @@ export function TopBar() {
           <span className="size-8 rounded-xl bg-gradient-primary text-primary-foreground grid place-items-center shadow-sm">
             <Heart className="size-4 fill-current" />
           </span>
-          <span className="font-brand text-lg sm:text-xl tracking-tight">Momota</span>
+          <span className="font-brand text-lg sm:text-xl tracking-tight">মমতা</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1 md:absolute md:left-1/2 md:-translate-x-1/2">
@@ -36,7 +36,9 @@ export function TopBar() {
                 to={to}
                 className={cn(
                   "px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition",
-                  active ? "bg-gradient-primary text-primary-foreground shadow-sm" : "text-foreground/80 hover:bg-secondary"
+                  active
+                    ? "bg-gradient-primary text-primary-foreground shadow-sm"
+                    : "text-foreground/80 hover:bg-secondary",
                 )}
               >
                 <Icon className="size-4" />
@@ -62,7 +64,10 @@ export function TopBar() {
             title={`${t("navMarketplace")} — ${t("marketSoonTitle")}`}
           >
             <ShoppingBag className="size-4" />
-            <span className="absolute -top-1 -right-1 size-2 rounded-full bg-marigold ring-2 ring-background" aria-hidden />
+            <span
+              className="absolute -top-1 -right-1 size-2 rounded-full bg-marigold ring-2 ring-background"
+              aria-hidden
+            />
           </Link>
           <Link
             to="/profile"
@@ -72,7 +77,6 @@ export function TopBar() {
             <User className="size-4" />
           </Link>
         </div>
-
       </div>
     </header>
   );

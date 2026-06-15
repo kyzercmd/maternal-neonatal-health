@@ -45,7 +45,10 @@ export function Avatar({
   if (generic) {
     return (
       <div
-        className={cn("rounded-full grid place-items-center bg-secondary text-muted-foreground border border-border shrink-0", className)}
+        className={cn(
+          "rounded-full grid place-items-center bg-secondary text-muted-foreground border border-border shrink-0",
+          className,
+        )}
         style={{ width: size, height: size }}
         aria-label="Default profile"
       >
@@ -56,7 +59,10 @@ export function Avatar({
 
   return (
     <div
-      className={cn("rounded-full grid place-items-center font-medium text-white shrink-0", className)}
+      className={cn(
+        "rounded-full grid place-items-center font-medium text-white shrink-0",
+        className,
+      )}
       style={{
         width: size,
         height: size,
@@ -69,4 +75,3 @@ export function Avatar({
     </div>
   );
 }
-

@@ -24,17 +24,24 @@ export function BottomNav() {
           return (
             <li key={to} className="relative">
               {active && (
-                <span className="absolute top-0 left-1/2 -translate-x-1/2 h-1 w-12 bg-gradient-primary rounded-b-full" aria-hidden />
+                <span
+                  className="absolute top-0 left-1/2 -translate-x-1/2 h-1 w-12 bg-gradient-primary rounded-b-full"
+                  aria-hidden
+                />
               )}
               <Link
                 to={to}
                 className={cn(
                   "flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium transition",
-                  active ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                  active ? "text-primary" : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                <span className={cn("size-9 grid place-items-center rounded-md transition",
-                  active ? "bg-gradient-primary text-primary-foreground shadow-md" : "")}>
+                <span
+                  className={cn(
+                    "size-9 grid place-items-center rounded-md transition",
+                    active ? "bg-gradient-primary text-primary-foreground shadow-md" : "",
+                  )}
+                >
                   <Icon className="size-5" />
                 </span>
                 <span className={cn(active && "font-semibold")}>{label}</span>

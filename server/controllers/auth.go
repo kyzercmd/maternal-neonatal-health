@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"math/rand"
 	"mime/multipart"
 	"net/http"
@@ -273,12 +274,23 @@ func (ac *AuthController) CameraVerificationHandler(w http.ResponseWriter, r *ht
 	}
 	writer.Close()
 
-	resp, err := http.Post("http://localhost:8000/verify-gender", writer.FormDataContentType(), body)
+	resp, err := http.Post("http://localhost:8006/verify-gender", writer.FormDataContentType(), body)
 	if err != nil {
+		log.Printf("Vision server connection error: %v", err)
 		http.Error(w, `{"error": "failed to connect to verification service"}`, http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		var errResp struct {
+			Detail interface{} `json:"detail"`
+		}
+		json.NewDecoder(resp.Body).Decode(&errResp)
+		log.Printf("Vision server returned error %d: %v", resp.StatusCode, errResp.Detail)
+		http.Error(w, `{"error": "verification service error"}`, http.StatusBadGateway)
+		return
+	}
 
 	var result struct {
 		Verified bool `json:"verified"`
@@ -289,7 +301,7 @@ func (ac *AuthController) CameraVerificationHandler(w http.ResponseWriter, r *ht
 	}
 
 	if !result.Verified {
-		http.Error(w, `{"error": "verification failed"}`, http.StatusForbidden)
+		http.Error(w, `{"error": "gender verification failed: only women are allowed"}`, http.StatusForbidden)
 		return
 	}
 

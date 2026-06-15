@@ -4,7 +4,10 @@ import { cn } from "@/lib/utils";
 
 type SpeechRecognition = any;
 declare global {
-  interface Window { SpeechRecognition?: any; webkitSpeechRecognition?: any }
+  interface Window {
+    SpeechRecognition?: any;
+    webkitSpeechRecognition?: any;
+  }
 }
 
 type Props = {
@@ -16,7 +19,14 @@ type Props = {
   lang?: string; // e.g. "bn-BD", "en-US"
 };
 
-export function SearchBar({ value, onChange, onSubmit, placeholder = "Search...", className, lang = "en-US" }: Props) {
+export function SearchBar({
+  value,
+  onChange,
+  onSubmit,
+  placeholder = "Search...",
+  className,
+  lang = "en-US",
+}: Props) {
   const [listening, setListening] = React.useState(false);
   const recRef = React.useRef<SpeechRecognition | null>(null);
 
@@ -45,10 +55,13 @@ export function SearchBar({ value, onChange, onSubmit, placeholder = "Search..."
 
   return (
     <form
-      onSubmit={(e) => { e.preventDefault(); onSubmit?.(value); }}
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit?.(value);
+      }}
       className={cn(
         "flex items-center gap-2 bg-white border border-border rounded-full px-3 sm:px-4 h-11 sm:h-12 shadow-sm focus-within:ring-2 focus-within:ring-primary/30 transition",
-        className
+        className,
       )}
       role="search"
     >
@@ -61,7 +74,12 @@ export function SearchBar({ value, onChange, onSubmit, placeholder = "Search..."
         aria-label={placeholder}
       />
       {value && (
-        <button type="button" onClick={() => onChange("")} className="text-muted-foreground hover:text-foreground p-1" aria-label="Clear">
+        <button
+          type="button"
+          onClick={() => onChange("")}
+          className="text-muted-foreground hover:text-foreground p-1"
+          aria-label="Clear"
+        >
           <X className="size-4" />
         </button>
       )}
@@ -70,7 +88,9 @@ export function SearchBar({ value, onChange, onSubmit, placeholder = "Search..."
         onClick={startVoice}
         className={cn(
           "shrink-0 rounded-full size-8 sm:size-9 grid place-items-center transition",
-          listening ? "bg-primary text-primary-foreground animate-pulse" : "bg-secondary text-foreground hover:bg-accent"
+          listening
+            ? "bg-primary text-primary-foreground animate-pulse"
+            : "bg-secondary text-foreground hover:bg-accent",
         )}
         aria-label="Voice search"
         title="Voice search"

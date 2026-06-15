@@ -7,7 +7,11 @@ export const API_BASE_URL: string | undefined =
 export const API_ENABLED = !!API_BASE_URL;
 
 export class ApiError extends Error {
-  constructor(public status: number, public body: unknown, message?: string) {
+  constructor(
+    public status: number,
+    public body: unknown,
+    message?: string,
+  ) {
     super(message ?? `API ${status}`);
   }
 }
@@ -18,10 +22,7 @@ function authHeader(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export async function apiFetch<T>(
-  path: string,
-  init: RequestInit = {},
-): Promise<T> {
+export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (!API_BASE_URL) {
     throw new ApiError(0, null, "VITE_API_BASE_URL is not set");
   }
@@ -40,7 +41,11 @@ export async function apiFetch<T>(
 }
 
 function safeJson(s: string): unknown {
-  try { return JSON.parse(s); } catch { return s; }
+  try {
+    return JSON.parse(s);
+  } catch {
+    return s;
+  }
 }
 
 export function setAuthToken(token: string | null) {

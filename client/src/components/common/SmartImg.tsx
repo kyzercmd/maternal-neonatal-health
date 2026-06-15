@@ -24,6 +24,8 @@ export function SmartImg({
 }: React.ImgHTMLAttributes<HTMLImageElement> & { fallback?: string }) {
   const initial = src && String(src).length > 0 ? src : fallback;
   const [current, setCurrent] = React.useState<string>(initial as string);
-  React.useEffect(() => { setCurrent((src && String(src).length > 0 ? src : fallback) as string); }, [src, fallback]);
+  React.useEffect(() => {
+    setCurrent((src && String(src).length > 0 ? src : fallback) as string);
+  }, [src, fallback]);
   return <img {...props} src={current} onError={() => setCurrent(fallback)} />;
 }

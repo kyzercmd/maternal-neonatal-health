@@ -18,8 +18,10 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MedicalIndexRouteImport } from './routes/medical.index'
 import { Route as MarketplaceIndexRouteImport } from './routes/marketplace.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as MedicalClinicsRouteImport } from './routes/medical.clinics'
 import { Route as MarketplaceNewRouteImport } from './routes/marketplace.new'
 import { Route as MarketplaceIdRouteImport } from './routes/marketplace.$id'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
@@ -73,6 +75,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MedicalIndexRoute = MedicalIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MedicalRoute,
+} as any)
 const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -82,6 +89,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const MedicalClinicsRoute = MedicalClinicsRouteImport.update({
+  id: '/clinics',
+  path: '/clinics',
+  getParentRoute: () => MedicalRoute,
 } as any)
 const MarketplaceNewRoute = MarketplaceNewRouteImport.update({
   id: '/new',
@@ -125,7 +137,7 @@ export interface FileRoutesByFullPath {
   '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
-  '/medical': typeof MedicalRoute
+  '/medical': typeof MedicalRouteWithChildren
   '/midwife': typeof MidwifeRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
@@ -136,14 +148,15 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/medical/clinics': typeof MedicalClinicsRoute
   '/admin/': typeof AdminIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
+  '/medical/': typeof MedicalIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
-  '/medical': typeof MedicalRoute
   '/midwife': typeof MidwifeRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
@@ -154,8 +167,10 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/medical/clinics': typeof MedicalClinicsRoute
   '/admin': typeof AdminIndexRoute
   '/marketplace': typeof MarketplaceIndexRoute
+  '/medical': typeof MedicalIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -164,7 +179,7 @@ export interface FileRoutesById {
   '/feed': typeof FeedRoute
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRouteWithChildren
-  '/medical': typeof MedicalRoute
+  '/medical': typeof MedicalRouteWithChildren
   '/midwife': typeof MidwifeRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
@@ -175,8 +190,10 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/marketplace/$id': typeof MarketplaceIdRoute
   '/marketplace/new': typeof MarketplaceNewRoute
+  '/medical/clinics': typeof MedicalClinicsRoute
   '/admin/': typeof AdminIndexRoute
   '/marketplace/': typeof MarketplaceIndexRoute
+  '/medical/': typeof MedicalIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -197,14 +214,15 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/marketplace/$id'
     | '/marketplace/new'
+    | '/medical/clinics'
     | '/admin/'
     | '/marketplace/'
+    | '/medical/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/feed'
     | '/login'
-    | '/medical'
     | '/midwife'
     | '/onboarding'
     | '/profile'
@@ -215,8 +233,10 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/marketplace/$id'
     | '/marketplace/new'
+    | '/medical/clinics'
     | '/admin'
     | '/marketplace'
+    | '/medical'
   id:
     | '__root__'
     | '/'
@@ -235,8 +255,10 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/marketplace/$id'
     | '/marketplace/new'
+    | '/medical/clinics'
     | '/admin/'
     | '/marketplace/'
+    | '/medical/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -245,7 +267,7 @@ export interface RootRouteChildren {
   FeedRoute: typeof FeedRoute
   LoginRoute: typeof LoginRoute
   MarketplaceRoute: typeof MarketplaceRouteWithChildren
-  MedicalRoute: typeof MedicalRoute
+  MedicalRoute: typeof MedicalRouteWithChildren
   MidwifeRoute: typeof MidwifeRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
@@ -316,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/medical/': {
+      id: '/medical/'
+      path: '/'
+      fullPath: '/medical/'
+      preLoaderRoute: typeof MedicalIndexRouteImport
+      parentRoute: typeof MedicalRoute
+    }
     '/marketplace/': {
       id: '/marketplace/'
       path: '/'
@@ -329,6 +358,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/medical/clinics': {
+      id: '/medical/clinics'
+      path: '/clinics'
+      fullPath: '/medical/clinics'
+      preLoaderRoute: typeof MedicalClinicsRouteImport
+      parentRoute: typeof MedicalRoute
     }
     '/marketplace/new': {
       id: '/marketplace/new'
@@ -418,13 +454,26 @@ const MarketplaceRouteWithChildren = MarketplaceRoute._addFileChildren(
   MarketplaceRouteChildren,
 )
 
+interface MedicalRouteChildren {
+  MedicalClinicsRoute: typeof MedicalClinicsRoute
+  MedicalIndexRoute: typeof MedicalIndexRoute
+}
+
+const MedicalRouteChildren: MedicalRouteChildren = {
+  MedicalClinicsRoute: MedicalClinicsRoute,
+  MedicalIndexRoute: MedicalIndexRoute,
+}
+
+const MedicalRouteWithChildren =
+  MedicalRoute._addFileChildren(MedicalRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   FeedRoute: FeedRoute,
   LoginRoute: LoginRoute,
   MarketplaceRoute: MarketplaceRouteWithChildren,
-  MedicalRoute: MedicalRoute,
+  MedicalRoute: MedicalRouteWithChildren,
   MidwifeRoute: MidwifeRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,

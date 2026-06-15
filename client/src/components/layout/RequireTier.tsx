@@ -9,13 +9,7 @@ import { useT } from "@/lib/i18n";
  * RequireTier — soft gate. Shows a warm "complete verification" card
  * instead of hard redirecting, preserving the empathetic tone.
  */
-export function RequireTier({
-  level = 3,
-  children,
-}: {
-  level?: 2 | 3;
-  children: React.ReactNode;
-}) {
+export function RequireTier({ level = 3, children }: { level?: 2 | 3; children: React.ReactNode }) {
   const { user } = useAuth();
   const t = useT();
   if (user.tier >= level) return <>{children}</>;
@@ -29,7 +23,9 @@ export function RequireTier({
       <p className="mt-2 text-muted-foreground text-sm">{t("gateBody")}</p>
       <div className="mt-5 flex flex-col gap-2">
         <Button asChild className="rounded-lg">
-          <Link to="/onboarding"><ShieldCheck className="size-4 mr-1.5" /> {t("gateCta")}</Link>
+          <Link to="/onboarding">
+            <ShieldCheck className="size-4 mr-1.5" /> {t("gateCta")}
+          </Link>
         </Button>
         <Link to="/medical" className="text-sm text-muted-foreground hover:text-foreground">
           {t("gateBrowse")}

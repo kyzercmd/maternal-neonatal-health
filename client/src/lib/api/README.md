@@ -20,18 +20,18 @@ instead of touching the store.
 
 See `endpoints.ts` for the full URL map. Match these in the Go router:
 
-| Frontend call | HTTP | Backend route |
-| --- | --- | --- |
-| `auth/request-otp` | POST | `/auth/otp/request` |
-| `auth/verify-otp` | POST | `/auth/otp/verify` |
-| `me` | GET / PATCH | `/users/me` |
-| `posts` | GET / POST | `/posts` |
-| `posts/:id/report` | POST | `/posts/:id/report` |
-| `listings` | GET / POST | `/listings` |
-| `midwife/chat` | POST | `/midwife/chat` |
-| `medical/alerts` | GET | `/medical/alerts` |
-| `verification/nid` | POST | `/verification/nid` |
-| `admin/...` | various | `/admin/*` (auth required) |
+| Frontend call      | HTTP        | Backend route              |
+| ------------------ | ----------- | -------------------------- |
+| `auth/request-otp` | POST        | `/auth/otp/request`        |
+| `auth/verify-otp`  | POST        | `/auth/otp/verify`         |
+| `me`               | GET / PATCH | `/users/me`                |
+| `posts`            | GET / POST  | `/posts`                   |
+| `posts/:id/report` | POST        | `/posts/:id/report`        |
+| `listings`         | GET / POST  | `/listings`                |
+| `midwife/chat`     | POST        | `/midwife/chat`            |
+| `medical/alerts`   | GET         | `/medical/alerts`          |
+| `verification/nid` | POST        | `/verification/nid`        |
+| `admin/...`        | various     | `/admin/*` (auth required) |
 
 ## 3. Data shapes
 
@@ -80,7 +80,7 @@ create table reports (...);             -- see types.ts:Report
 // src/lib/api/posts.ts — already wired this way
 export async function listPosts(): Promise<LocalPost[]> {
   if (API_ENABLED) return apiFetch(endpoints.posts);
-  return postsStore.get();  // fallback removed once backend is live
+  return postsStore.get(); // fallback removed once backend is live
 }
 ```
 

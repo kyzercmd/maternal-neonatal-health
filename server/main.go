@@ -124,10 +124,26 @@ func main() {
 	mux.Handle("POST /admin/verifications/approve", middleware.RequireAuth(http.HandlerFunc(ad.ApproveNIDHandler)))
 	mux.Handle("POST /admin/verifications/reject", middleware.RequireAuth(http.HandlerFunc(ad.RejectNIDHandler)))
 
+	// Simple CORS middleware
+	corsMiddleware := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
+
 	// 5. Start HTTP Server
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: mux,
+		Handler: corsMiddleware(mux),
 	}
 
 	// 6. Graceful Shutdown Logic

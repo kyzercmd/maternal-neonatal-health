@@ -52,7 +52,7 @@ const STORAGE_KEY = "momota.user.v1";
 const defaultUser: UserState = {
   tier: 1,
   verified: false,
-  language: "en",
+  language: "bn",
   mother: {},
   child: {},
   medical: {},
@@ -96,16 +96,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const setUser = React.useCallback(
     (u: Partial<UserState>) => setState((prev) => ({ ...prev, ...u })),
-    []
+    [],
   );
   const update = React.useCallback(
     <K extends keyof UserState>(key: K, value: UserState[K]) =>
       setState((prev) => ({ ...prev, [key]: value })),
-    []
+    [],
   );
   const reset = React.useCallback(() => setState(defaultUser), []);
 
-  const value = React.useMemo(() => ({ user, setUser, update, reset }), [user, setUser, update, reset]);
+  const value = React.useMemo(
+    () => ({ user, setUser, update, reset }),
+    [user, setUser, update, reset],
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
@@ -116,7 +119,9 @@ export function useAuth() {
 }
 
 // Convenience: derive child age cohort
-export function getCohort(child: ChildInfo): "pregnancy" | "0-6m" | "6-12m" | "1-2y" | "2-5y" | "unknown" {
+export function getCohort(
+  child: ChildInfo,
+): "pregnancy" | "0-6m" | "6-12m" | "1-2y" | "2-5y" | "unknown" {
   if (child.edd && !child.dob) return "pregnancy";
   if (!child.dob) return "unknown";
   const dob = new Date(child.dob);
