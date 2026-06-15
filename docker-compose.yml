@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  # 1. MongoDB Data Lake
+  mongodb:
+    image: mongo:latest
+    container_name: maternal_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  # 2. RabbitMQ Message Queue
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: maternal_queue
+    ports:
+      - "5672:5672" # AMQP protocol port for your Go/Python code
+      - "15672:15672" # Management UI (Browser dashboard)
+    restart: unless-stopped
+
+volumes:
+  # This ensures your database isn't wiped out if you restart Docker
+  mongo_data:
